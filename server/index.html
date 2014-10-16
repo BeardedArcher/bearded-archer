@@ -17,20 +17,25 @@
                     });
                 });
 
-                $('#outgoingChatMessage').keypress(function(event) {
-                    if (event.which == 13) {
-                        event.preventDefault();
-                        iosocket.send($('#outgoingChatMessage').val());
-                        $('#incomingChatMessages').append($('<li></li>').text($('#outgoingChatMessage').val()));
-                        $('#outgoingChatMessage').val('');
-                    }
+                $('#loginForm').on('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    iosocket.emit('login', {
+                        login: $('#login').val(),
+                        password: $('#password').val()
+                    });
                 });
             });
         </script>
     </head>
     <body>
+        <form id="loginForm">
+            <input type="text" id="login">
+            <input type="password" id="password">
+            <input type="submit">
+        </form>
+        
         Incoming Chat: <ul id="incomingChatMessages"></ul>
-
 
         <input type="text" id="outgoingChatMessage">
     </body>

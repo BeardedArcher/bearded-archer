@@ -9,8 +9,11 @@ var server = http.createServer(function(req, res) {
     console.log('Listening at: http://localhost:8080');
 });
 
+var loggedUsers = [];
+
 socketio.listen(server).on('connection', function (socket) {
     socket.on('login', function(data) {
+        console.log(data);
         console.log('Tried to login: ', data.login, data.password);
     }),
     socket.on('createGame', function (data) {
