@@ -5,5 +5,12 @@
         "user": "root",
         "password": "",
         "database": "node_db"
+    },
+    "os" : {
+        "host": "localhost",
+        "driver": "mysql",
+        "user": "adminApTzfES",
+        "password": "yTXy2KaAyu-K",
+        "database": "node_db"
     }
 }
