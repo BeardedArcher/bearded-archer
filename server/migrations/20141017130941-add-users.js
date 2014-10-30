@@ -15,7 +15,7 @@ exports.up = function(db, callback) {
     });
     db.addColumn('users', 'password', {
         type: 'string',
-        length: 32
+        length: 64
     });
 };
 

@@ -21,8 +21,16 @@
                     event.preventDefault();
                     event.stopPropagation();
                     iosocket.emit('login', {
-                        login: $('#login').val(),
-                        password: $('#password').val()
+                        login: $(this).find('.login').val(),
+                        password: $(this).find('.password').val()
+                    });
+                });
+                $('#registerForm').on('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    iosocket.emit('register', {
+                        login: $(this).find('.login').val(),
+                        password: $(this).find('.password').val()
                     });
                 });
             });
@@ -30,8 +38,15 @@
     </head>
     <body>
         <form id="loginForm">
-            <input type="text" id="login">
-            <input type="password" id="password">
+            Sign in:
+            <input type="text" class="login">
+            <input type="password" class="password">
+            <input type="submit">
+        </form>
+        <form id="registerForm">
+            Register:
+            <input type="text" class="login">
+            <input type="password" class="password">
             <input type="submit">
         </form>
         
