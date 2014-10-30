@@ -36,7 +36,7 @@ var app = function () {
             'Content-type': 'text/html'
         });
         res.end(fs.readFileSync(__dirname + '/index.html'));
-    }).listen(8080, function () {
+    }).listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || 'localhost', function () {
         debug.log('Listening at: http://localhost:8080');
     });
     io = socketio.listen(server).on('connection', function (socket) {
