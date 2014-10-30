@@ -4,7 +4,7 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             $(function() {
-                var iosocket = io.connect();
+                var iosocket = io.connect('http://node-tuminure.rhcloud.com:8000/');
 
                 iosocket.on('connect', function() {
                     $('#incomingChatMessages').append($('<li>Connected</li>'));
