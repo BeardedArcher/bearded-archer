@@ -1,5 +1,5 @@
 var mysql = require('mysql'),
-    connection = mysql.createConnection(dbconfig),
+    connection,
     dbconfig;
 
 if (process.env.OPENSHIFT_MYSQL_DB_HOST) {
@@ -7,5 +7,7 @@ if (process.env.OPENSHIFT_MYSQL_DB_HOST) {
 } else {
     dbconfig = require(process.cwd() + '/database.json').dev;
 }
+
+connection = mysql.createConnection(dbconfig);
     
 exports.connection = connection;
