@@ -4,13 +4,15 @@
         "driver": "mysql",
         "user": "root",
         "password": "",
-        "database": "node_db"
+        "database": "node_db",
+        "description": "Dev db"
     },
     "os" : {
         "host": "localhost",
         "driver": "mysql",
         "user": "adminApTzfES",
         "password": "yTXy2KaAyu-K",
-        "database": "node_db"
+        "database": "node_db",
+        "description": "Openshift db"
     }
 }

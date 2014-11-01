@@ -4,7 +4,8 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             $(function() {
-                var iosocket = io.connect('http://node-tuminure.rhcloud.com:8000/');
+//                var iosocket = io.connect('http://node-tuminure.rhcloud.com:8000/');
+                var iosocket = io.connect('http://localhost:8081/');
 
                 iosocket.on('connect', function() {
                     $('#incomingChatMessages').append($('<li>Connected</li>'));
@@ -33,6 +34,9 @@
                         password: $(this).find('.password').val()
                     });
                 });
+                $('#check').on('click', function() {
+                    iosocket.emit('check');
+                })
             });
         </script>
     </head>
@@ -49,6 +53,8 @@
             <input type="password" class="password">
             <input type="submit">
         </form>
+
+        <button id="check">sprawdź</button>
         
         Incoming Chat: <ul id="incomingChatMessages"></ul>
 

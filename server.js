@@ -1,5 +1,6 @@
 var app = function () {
     'use strict';
+    
     /**
      * Load env variables
      */
@@ -12,21 +13,14 @@ var app = function () {
     var fs = require('fs'),
         http = require('http'),
         socketio = require('socket.io'),
-        user = require('./modules/users'),
+        users = require('custom')('users'),
         q = require('q'),
         server,
         io,
-        debug = {
-            log: require('debug')('log    '),
-            warning: require('debug')('warning'),
-            error: require('debug')('error  '),
-            secure: require('debug')('secure ')
-        };
-
-    debug.log('Standard logs visible');
-    debug.error('Error logs visible');
-    debug.warning('Warning logs visible');
-    debug.secure('Secure logs visible');
+        port = process.env.OPENSHIFT_NODEJS_PORT || 8081,
+        ip = process.env.OPENSHIFT_NODEJS_IP || 'localhost',
+        debug = require('custom')('logs'),
+        loggedUsers = users.loggedUsers;
 
     /**
      * Start listening
@@ -36,20 +30,23 @@ var app = function () {
             'Content-type': 'text/html'
         });
         res.end(fs.readFileSync(__dirname + '/index.html'));
-    }).listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || 'localhost', function () {
-        debug.log('Listening at: http://localhost:8080');
+    }).listen(port, ip, function () {
+        debug.log('Listening at: ' + ip + ':' + port);
     });
+    
     io = socketio.listen(server).on('connection', function (socket) {
-        var loggedUsers = {};
+        var user = new users.user;
+        socket.on('disconnect', function() {
+            user.logout(socket);
+        });
         socket.on('login', function (data) {
             debug.log('Trying to sign in user');
             debug.secure('Login: ' + data.login);
             debug.secure('Password: ' + data.password);
-            user.login(data.login, data.password)
+            user.login(data.login, data.password, socket)
                 .then(function (response) {
                     debug.log(response);
                     socket.emit({logged: true});
-                    loggedUsers = {};
                 }, function (error) {
                     debug.error(error);
                     socket.emit({logged: false});
@@ -68,6 +65,10 @@ var app = function () {
                     debug.secure(error);
                     socket.emit({registered: false});
                 });
+        });
+        socket.on('check', function (data) {
+            console.log('---');
+            console.log(loggedUsers.showList());
         });
         socket.on('createGame', function (data) {
 //                console.log('Creating game: ', data.host, data.guest);
