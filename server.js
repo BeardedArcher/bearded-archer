@@ -15,6 +15,7 @@ var app = function () {
         socketio = require('socket.io'),
         users = require('custom')('users'),
         q = require('q'),
+        url = require('url'),
         server,
         io,
         port = process.env.OPENSHIFT_NODEJS_PORT || 8081,
@@ -26,10 +27,58 @@ var app = function () {
      * Start listening
      */
     server = http.createServer(function (req, res) {
-        res.writeHead(200, {
-            'Content-type': 'text/html'
-        });
-        res.end(fs.readFileSync(__dirname + '/index.html'));
+        var dir = __dirname,
+            error = false;
+            switch (url.parse(req.url).pathname.split('.').pop()) {
+                case '':
+                case '/':
+                    res.writeHead(200, {
+                        'Content-type': 'text/html'
+                    });
+                    dir += '/frontend/build/index.html'
+                    break;
+                case 'css':
+                    res.writeHead(200, {
+                        'Content-type': 'text/css'
+                    });
+                    dir += '/frontend/build/' + url.parse(req.url).pathname;
+                    break;
+                case 'js':
+                    res.writeHead(200, {
+                        'Content-type': 'application/javascript'
+                    });
+                    dir += '/frontend/build/' + url.parse(req.url).pathname;
+                    break;
+                case 'ico':
+                    res.writeHead(200, {
+                        'Content-type': 'image/png'
+                    });
+                    dir += '/frontend/build/assets/favicon.ico'
+                    break;
+                case 'png':
+                case 'jpg':
+                case 'jpeg':
+                case 'gif':
+                    res.writeHead(200, {
+                        'Content-type': 'image/' + url.parse(req.url).pathname.split('.').pop()
+                    });
+                    dir += '/frontend/build/' + url.parse(req.url).pathname;
+                    break;
+                default:
+                    error = '404';
+            }
+            
+            fs.exists(dir, function(exists) {
+                if(error !== '404' && exists) {
+                    res.end(fs.readFileSync(dir));
+                } else {
+                    console.log(1);
+                    res.writeHead(404, {
+                        'Content-type': 'text/html'
+                    });
+                    res.end(fs.readFileSync(__dirname + '/frontend/build/index.html'));
+                }
+            });
     }).listen(port, ip, function () {
         debug.log('Listening at: ' + ip + ':' + port);
     });
@@ -47,6 +96,9 @@ var app = function () {
                 .then(function (response) {
                     debug.log(response);
                     socket.emit({logged: true});
+                    user.syncValues().then(function() {
+                        socket.emit('stats', user.getEmitData('stats'));
+                    });
                 }, function (error) {
                     debug.error(error);
                     socket.emit({logged: false});
@@ -58,21 +110,20 @@ var app = function () {
             debug.secure('Password: ' + data.password);
             user.register(data.login, data.password)
                 .then(function (response) {
+                    debug.log(response);
                     debug.log('Registered new user');
-                    socket.emit({registered: true});
+                    socket.emit('registered', {registered: true});
                 }, function (error) {
                     debug.error('Error during register');
                     debug.secure(error);
-                    socket.emit({registered: false});
+                    socket.emit('registered', {registered: false});
                 });
         });
         socket.on('check', function (data) {
-            console.log('---');
-            console.log(loggedUsers.showList());
+            socket.emit('stats', user.getEmitData('stats'));
         });
         socket.on('createGame', function (data) {
-//                console.log('Creating game: ', data.host, data.guest);
-//                socket.broadcast.emit('message', msg);
+            
         });
     });
 };

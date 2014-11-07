@@ -4,7 +4,7 @@ var type = dbm.dataType;
 exports.up = function(db, callback) {
     db.addColumn('users', 'salt', {
         type: 'string',
-        length: 8
+        length: 16
     }, callback);
 };
 
