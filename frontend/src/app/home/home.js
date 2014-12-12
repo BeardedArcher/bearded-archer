@@ -17,10 +17,26 @@ angular.module('home', [
     });
 })
 
-.controller('Home', function ($scope, iosocket) {
-    var processRegister, processLogin;
+.controller('Home', function ($scope, iosocket, $state) {
 
-    processRegister = function() {
+    $scope.loginInput = 'asd';
+    $scope.passwordInput = 'zxc';
 
+    $scope.processRegister = function() {
     };
+
+    $scope.processLogin = function(login, password) {
+        iosocket.emit('login', {
+            login: login,
+            password: password
+        });
+    };
+
+    $scope.$on('socket:logged', function(event, data) {
+        if (data.logged === true) {
+            $state.go('game');
+        } else {
+            $scope.error = 'Wrong login and/or password.';
+        }
+    });
 });

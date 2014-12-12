@@ -4,6 +4,7 @@ module.exports = function (grunt) {
      * Load required Grunt tasks. These are installed based on the versions listed
      * in `package.json` when you do `npm install` in this directory.
      */
+    grunt.loadNpmTasks('grunt-contrib-compass');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -224,6 +225,27 @@ module.exports = function (grunt) {
                 },
                 files: {
                     '<%= concat.compile_js.dest %>': '<%= concat.compile_js.dest %>'
+                }
+            }
+        },
+
+        compass: {
+            dist: {
+                options: {
+                  sassDir: 'src/sass',
+                  cssDir: '<%= distdir %>/assets/styles/',
+                  environment: 'production',
+                  raw: "preferred_syntax = :scss\n"
+                }
+            },
+
+            dev: {
+                options: {
+                  outputStyle: 'compact',
+                  sassDir: 'src/sass',
+                  cssDir: '<%= distdir %>/assets/styles/',
+                  environment: 'development',
+                  raw: "preferred_syntax = :scss\n"
                 }
             }
         },
@@ -466,6 +488,10 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['html2js']
             },
+            sass: {
+                files: [ 'src/**/*.scss' ],
+                tasks: 'compassCompile'
+            },
             /**
              * When the CSS files change, we need to compile and minify them.
              */
@@ -523,7 +549,7 @@ module.exports = function (grunt) {
      * The `build` task gets your app ready to run for development and testing.
      */
     grunt.registerTask('build', [
-        'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'less:build',
+        'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'less:build', 'compassCompile',
         'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
         'copy:build_appjs', 'copy:build_vendorjs', 'index:build', 'karmaconfig',
         'karma:continuous'
@@ -534,8 +560,12 @@ module.exports = function (grunt) {
      * minifying your code.
      */
     grunt.registerTask('compile', [
-        'less:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
+        'less:compile', 'compassCompile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
     ]);
+
+    grunt.registerTask('compassCompile', 'Compiling the sass files', function () {
+//        grunt.task.run('compass:dev');
+    });
 
     /**
      * A utility function to get all app JavaScript sources.

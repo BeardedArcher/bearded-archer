@@ -1,12 +1,9 @@
 <form class="loginForm">
     Sign in:
-    <input type="text" class="login">
-    <input type="password" class="password">
-    <input type="submit">
-</form>
-<form class="registerForm">
-    Register:
-    <input type="text" class="login">
-    <input type="password" class="password">
-    <input type="submit">
+    <input type="text" class="login" ng-model="loginInput">
+    <input type="password" class="password" ng-model="passwordInput">
+
+    <span ng-show="error">{{error}}</span>
+    <input type="submit" value="Login" ng-click="processLogin(loginInput, passwordInput)">
+    <input type="submit" value="Register" ng-click="processRegister(loginInput, passwordInput)">
 </form>

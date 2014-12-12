@@ -3,6 +3,7 @@ angular.module('ngBoilerplate', [
     'templates-common',
     'error404',
     'home',
+    'game',
     'ui.router',
     'iosocket'
 ])
@@ -16,6 +17,6 @@ angular.module('ngBoilerplate', [
     
 })
 
-.controller('AppCtrl', function AppCtrl($scope, $location, $state, iosocket) {
-    console.log(iosocket);
-});
+.controller('AppCtrl', ['$scope', '$location', '$state', 'iosocket', function AppCtrl($scope, $location, $state, iosocket) {
+    
+}]);

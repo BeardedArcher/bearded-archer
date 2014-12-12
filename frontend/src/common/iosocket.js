@@ -1,9 +1,10 @@
 angular.module('iosocket', [
-    'ui.router'
+    'btford.socket-io'
 ])
-.factory('iosocket', function() {
-
-    var iosocket = io.connect('http://localhost:8081/');
+.factory('iosocket', function(socketFactory) {
+    var iosocket = socketFactory();
+    iosocket.forward('logged');
+    iosocket.forward('isLogged');
 
     return iosocket;
 });

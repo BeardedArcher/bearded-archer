@@ -95,13 +95,13 @@ var app = function () {
             user.login(data.login, data.password, socket)
                 .then(function (response) {
                     debug.log(response);
-                    socket.emit({logged: true});
+                    socket.emit('logged', { logged: user.isLogged() });
                     user.syncValues().then(function() {
                         socket.emit('stats', user.getEmitData('stats'));
                     });
                 }, function (error) {
                     debug.error(error);
-                    socket.emit({logged: false});
+                    socket.emit('logged', { logged: user.isLogged() });
                 });
         });
         socket.on('register', function (data) {
@@ -112,12 +112,17 @@ var app = function () {
                 .then(function (response) {
                     debug.log(response);
                     debug.log('Registered new user');
-                    socket.emit('registered', {registered: true});
+                    socket.emit('registered', { registered: true});
                 }, function (error) {
                     debug.error('Error during register');
                     debug.secure(error);
-                    socket.emit('registered', {registered: false});
+                    socket.emit('registered', { registered: false});
                 });
+        });
+        socket.on('checkLogin', function (data) {
+            var isLogged = user.isLogged();
+            debug.log('Checking if user is logged: ' + isLogged);
+            socket.emit('isLogged', { isLogged: isLogged } );
         });
         socket.on('check', function (data) {
             socket.emit('stats', user.getEmitData('stats'));
